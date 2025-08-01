@@ -1,6 +1,7 @@
 import { Server } from "http";
 import mongoose from "mongoose";
 import app from "./app";
+import { envVars } from "./app/config/env";
 
 let server: Server;
 
@@ -8,7 +9,7 @@ let server: Server;
 
 const startServer = async () => {
     try {
-        await mongoose.connect("mongodb+srv://mongodb:mongodb@cluster0.iihfjgc.mongodb.net/tour-management-backend?retryWrites=true&w=majority&appName=Cluster0");
+        await mongoose.connect(envVars.DB_URL);
 
         console.log("Connected to Database !!!");
 
