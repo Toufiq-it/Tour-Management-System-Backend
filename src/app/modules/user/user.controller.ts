@@ -21,7 +21,6 @@ import sendResponse from "../../ulits/sendResponse";
 //     }
 // };
 
-
 // create user
 const createUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const user = await UserService.createUser(req.body);
