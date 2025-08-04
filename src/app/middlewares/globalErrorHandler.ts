@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextFunction, Request, Response } from "express"
 import { envVars } from "../config/env"
-import AppError from "../errorHelpers/appError";
+import AppError from "../errorHelpers/AppError";
 
 export const globalErrorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
 
