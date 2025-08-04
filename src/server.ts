@@ -3,6 +3,7 @@ import { Server } from "http";
 import mongoose from "mongoose";
 import app from "./app";
 import { envVars } from "./app/config/env";
+import { seedSuperAdmin } from "./app/ulits/seedSuperAdmin";
 
 let server: Server;
 
@@ -23,7 +24,12 @@ const startServer = async () => {
 
 };
 
-startServer();
+// ifi function
+(async () => {
+    await startServer();
+    // super admin
+    await seedSuperAdmin();
+})()
 
 /**
  * server ERROR handle !
