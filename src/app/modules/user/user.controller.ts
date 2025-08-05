@@ -52,7 +52,7 @@ const updateUser = catchAsync(async (req: Request, res: Response, next: NextFunc
     // const verifiedToken = verifyToke(token as string, envVars.JWT_ACCESS_SECRET) as JwtPayload;
     const verifiedToken = req.user;
 
-    const user = await UserService.updateUser(userId, payload, verifiedToken);
+    const user = await UserService.updateUser(userId, payload, verifiedToken as JwtPayload);
 
     // res.status(httpStatus.CREATED).json({
     //     message: "User Created Successfully",
