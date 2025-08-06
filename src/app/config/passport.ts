@@ -25,7 +25,7 @@ passport.use(
             const isGoogleAuthenticated = isUserExist.auth.some(providerObjects => providerObjects.provider == "google");
 
             if (isGoogleAuthenticated && !isUserExist.password) {
-                return done(null, false, { message: "You have authenticated through Google. So if you went to login with credentials, then at first login with google and set a password for your Gmail, and then you can login with eamil and password."})
+                return done(null, false, { message: "You have authenticated through Google. So if you went to login with credentials, then at first login with google and set a password for your Gmail, and then you can login with eamil and password." })
             }
 
             // password check
@@ -38,7 +38,9 @@ passport.use(
             return done(null, isUserExist)
 
         } catch (error) {
-            console.log(error);
+            if (envVars.NODE_ENV === "development") {
+                console.log(error);
+            }
             done(error);
 
         }
@@ -82,7 +84,9 @@ passport.use(
                 return done(null, user)
 
             } catch (error) {
-                console.log("Google strategy error", error);
+                if (envVars.NODE_ENV === "development") {
+                    console.log("Google strategy error", error);
+                }
                 done(error);
             };
         }
@@ -104,7 +108,9 @@ passport.deserializeUser(async (id: string, done: any) => {
         const user = await User.findById(id)
         done(null, user);
     } catch (error) {
-        console.log(error);
+        if (envVars.NODE_ENV === "development") {
+            console.log(error);
+        }
         done(error);
 
     }

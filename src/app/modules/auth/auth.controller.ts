@@ -131,7 +131,9 @@ const googleCallbackController = catchAsync(async (req: Request, res: Response, 
     // /booking = /booking, => "/" = ""
 
     const user = req.user;
-    console.log("user", user);
+    if (envVars.NODE_ENV === "development") {
+        console.log("user", user);
+    }
 
 
     if (!user) {
