@@ -5,10 +5,7 @@ import httpStatus from "http-status-codes";
 import { UserService } from "./user.service";
 import { catchAsync } from "../../ulits/catchAsync";
 import sendResponse from "../../ulits/sendResponse";
-import { verifyToke } from "../../ulits/jwt";
-import { envVars } from "../../config/env";
 import { JwtPayload } from "jsonwebtoken";
-
 
 // create user
 // const createUser = async (req: Request, res: Response, next: NextFunction) => {
@@ -41,13 +38,11 @@ const createUser = catchAsync(async (req: Request, res: Response, next: NextFunc
     });
 });
 
-
 // update user
 const updateUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.params.id;
     const payload = req.body;
 
-    
     // const token = req.headers.authorization;
     // const verifiedToken = verifyToke(token as string, envVars.JWT_ACCESS_SECRET) as JwtPayload;
     const verifiedToken = req.user;
@@ -66,7 +61,6 @@ const updateUser = catchAsync(async (req: Request, res: Response, next: NextFunc
         data: user,
     });
 });
-
 
 // Get All users
 const getAllUsers = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
