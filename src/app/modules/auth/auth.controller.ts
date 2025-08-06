@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextFunction, Request, Response } from "express";
 import { catchAsync } from "../../ulits/catchAsync";
@@ -9,31 +10,51 @@ import { setAuthCookie } from "../../ulits/setCookie";
 import { createUsertoken } from "../../ulits/userTokens";
 import { envVars } from "../../config/env";
 import { JwtPayload } from "jsonwebtoken";
+import passport from "passport";
 
-// custom login
+// passport credential login
 const credentialsLogin = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const loginInfo = await AuthServices.credentialsLogin(req.body);
+    // const loginInfo = await AuthServices.credentialsLogin(req.body);
 
-    // set cookies in browser
-    // res.cookie("accessToken", loginInfo.accessToken, {
-    //     // frontend e cookies ta set korbe
-    //     httpOnly: true,
-    //     secure: false,
-    // });
+    passport.authenticate("local", async (err: any, user: any, info: any) => {
 
-    // res.cookie("refreshToken", loginInfo.refreshToken, {
-    //     httpOnly: true,
-    //     secure: false,
-    // })
+        if (err) {
+            // eigulo use kora jabe nh
+            // throw new AppError(401, "some error")
+            // next(err)
+            // return new AppError(401, err);
 
-    setAuthCookie(res, loginInfo);
+            // use kore jbe
+            // return next(err);
+            return next(new AppError(401, err));
+        }
 
-    sendResponse(res, {
-        success: true,
-        statusCode: httpStatus.OK,
-        message: "User Logged In Successfully",
-        data: loginInfo,
-    });
+        if (!user) {
+            return next(new AppError(401, info.message));
+        }
+
+        const userToken = await createUsertoken(user);
+
+        // remove password // security optimization -> frontend and backend don't show password, that's why remove password
+        // delete user.toObject().password
+        const { password: pass, ...rest} = user.toObject();
+
+        // set cookies in browser
+        setAuthCookie(res, userToken);
+
+        sendResponse(res, {
+            success: true,
+            statusCode: httpStatus.OK,
+            message: "User Logged In Successfully",
+            data: {
+                accessToken: userToken.accessToken,
+                refreshToken: userToken.refreshToken,
+                user: rest,
+            },
+        });
+
+    })(req, res, next)
+
 });
 
 // refresh token
@@ -61,7 +82,7 @@ const getNewAccesstoken = catchAsync(async (req: Request, res: Response, next: N
 
 // logout
 const logout = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    
+
     res.clearCookie("accessToken", {
         httpOnly: true,
         secure: false,
@@ -83,7 +104,7 @@ const logout = catchAsync(async (req: Request, res: Response, next: NextFunction
 
 // reset password
 const resetPassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    
+
     const newPassword = req.body.newPassword;
     const oldPassword = req.body.oldPassword;
     const decodedTokan = req.user;
@@ -100,7 +121,7 @@ const resetPassword = catchAsync(async (req: Request, res: Response, next: NextF
 
 // google callback
 const googleCallbackController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    
+
     let redirectTo = req.query.state ? req.query.state as string : "";
 
     if (redirectTo.startsWith("/")) {
@@ -111,7 +132,7 @@ const googleCallbackController = catchAsync(async (req: Request, res: Response, 
 
     const user = req.user;
     console.log("user", user);
-    
+
 
     if (!user) {
         throw new AppError(httpStatus.NOT_FOUND, "User Not Found")
