@@ -37,7 +37,8 @@ const tourSchema = new Schema<ITour>({
         required: true,
     },
 }, {
-    timestamps: true
+    timestamps: true,
+    versionKey:false
 });
 
 export const Tour = model<ITour>("Tour", tourSchema);
