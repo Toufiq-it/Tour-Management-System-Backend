@@ -4,6 +4,7 @@ import sendResponse from "../../ulits/sendResponse";
 import { TourService } from "./tour.service";
 
 /**---------------Tour-------------*/
+
 const createTour = catchAsync(async (req: Request, res: Response) => {
     const result = await TourService.createTour(req.body);
     sendResponse(res, {
@@ -24,6 +25,18 @@ const getAllTours = catchAsync(async (req: Request, res: Response) => {
         message: 'Tours retrieved successfully',
         data: result.data,
         meta: result.meta,
+    });
+});
+
+const getSingleTour = catchAsync(async (req: Request, res: Response) => {
+    const slug = req.params.slug;
+    const result = await TourService.getSingleTour(slug);
+
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: 'Tours retrieved successfully',
+        data: result.data,
     });
 });
 
@@ -50,6 +63,7 @@ const deleteTour = catchAsync(async (req: Request, res: Response) => {
 });
 
 /**---------------Tour Type-------------*/
+
 const getAllTourTypes = catchAsync(async (req: Request, res: Response) => {
     const result = await TourService.getAllTourTypes();
     sendResponse(res, {
@@ -60,7 +74,6 @@ const getAllTourTypes = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
-
 const createTourType = catchAsync(async (req: Request, res: Response) => {
     const body = req.body;
     const result = await TourService.createTourType(body);
@@ -68,6 +81,17 @@ const createTourType = catchAsync(async (req: Request, res: Response) => {
         statusCode: 201,
         success: true,
         message: 'Tour type created successfully',
+        data: result,
+    });
+});
+
+const getSingleTourTypes = catchAsync(async (req: Request, res: Response) => {
+    const slug = req.params.slug;
+    const result = await TourService.getSingleTourTypes(slug);
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: 'Tour types retrieved successfully',
         data: result,
     });
 });
@@ -96,12 +120,16 @@ const deleteTourType = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const TourController = {
-    createTour,
+    // Tour Type
     createTourType,
     getAllTourTypes,
+    getSingleTourTypes,
     deleteTourType,
     updateTourType,
+    // Tour 
+    createTour,
     getAllTours,
+    getSingleTour,
     updateTour,
     deleteTour,
 };

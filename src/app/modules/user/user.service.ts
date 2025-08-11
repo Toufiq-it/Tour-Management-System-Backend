@@ -90,8 +90,18 @@ const getAllUsers = async () => {
     };
 }
 
+// Get single user
+const getSingleUser = async (slug: string) => {
+    const user = await User.find({slug});
+
+    return {
+        data: user
+    };
+}
+
 export const UserService = {
     createUser,
-    getAllUsers,
     updateUser,
+    getAllUsers,
+    getSingleUser,
 };

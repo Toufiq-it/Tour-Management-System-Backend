@@ -25,11 +25,6 @@ import { JwtPayload } from "jsonwebtoken";
 const createUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const user = await UserService.createUser(req.body);
 
-    // res.status(httpStatus.CREATED).json({
-    //     message: "User Created Successfully",
-    //     user
-    // });
-
     sendResponse(res, {
         success: true,
         statusCode: httpStatus.CREATED,
@@ -81,11 +76,25 @@ const getAllUsers = catchAsync(async (req: Request, res: Response, next: NextFun
     });
 });
 
+// Get single user
+const getSingleUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const slug = req.params.slug;
+    const users = await UserService.getSingleUser(slug);
+
+    sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.CREATED,
+        message: "User Retrieved Successfully",
+        data: users.data,
+    });
+});
+
 
 export const userController = {
     createUser,
-    getAllUsers,
     updateUser,
+    getAllUsers,
+    getSingleUser,
 };
 
 // route matching -> controller -> service -> model -> DB

@@ -19,6 +19,8 @@ const tourSchema = new Schema<ITour>({
     images: { type: [String], default: [] },
     location: { type: String },
     costFrom: { type: Number },
+    departureLocation: { type: String },
+    arrivalLocation: { type: String },
     startDate: { type: Date },
     endDate: { type: Date },
     included: { type: [String], default: [] },
@@ -39,7 +41,7 @@ const tourSchema = new Schema<ITour>({
     },
 }, {
     timestamps: true,
-    versionKey:false
+    versionKey: false
 });
 
 // create slug
@@ -50,7 +52,7 @@ tourSchema.pre("save", async function (next) {
 
         let counter = 0;
         while (await Tour.exists({ slug })) {
-            slug = `${slug}-${counter++}`; 
+            slug = `${slug}-${counter++}`;
         }
         this.slug = slug;
     }

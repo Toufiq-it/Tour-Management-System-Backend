@@ -1,5 +1,3 @@
-import { Query } from "mongoose";
-import { excludeField } from "../../constant";
 import { tourSearchFields } from "./tour.constant";
 import { ITour, ITourType } from "./tour.interface";
 import { Tour, TourType } from "./tour.model";
@@ -103,24 +101,34 @@ const getAllTours = async (query: Record<string, string>) => {
 
     const queryBuilder = new QueryBuilder(Tour.find(), query);
 
-    const tours = await queryBuilder.search(tourSearchFields).filter().modelQuery
+    const tours = await queryBuilder
+        .search(tourSearchFields)
+        .filter()
+        .sort()
+        .fields()
+        .paginate()
 
-    // const totalTour = await Tour.countDocuments();
+    // const meta = await queryBuilder.getMeta();
 
-    // // totalPage = 22/10 = 2.2 => ciel(2.2) => 3
-    // const totalPage = Math.ceil(totalTour / limit)
+    const [data, meta] = await Promise.all([
+        tours.build(),
+        queryBuilder.getMeta(),
+    ])
 
-    // const meta = {
-    //     page: page,
-    //     limit: limit,
-    //     total: totalTour,
-    //     totalPage: totalPage,
-    // };
     return {
-        data: tours,
-        // meta: meta,
+        data,
+        meta
     };
 };
+
+// get single tour
+const getSingleTour = async (slug: string) =>{
+    const tour = await Tour.findOne({slug});
+
+    return {
+        data: tour,
+    }
+}
 
 // update tour
 const updateTour = async (id: string, payload: Partial<ITour>) => {
@@ -170,6 +178,13 @@ const getAllTourTypes = async () => {
     return await TourType.find();
 };
 
+const getSingleTourTypes = async (slug: string) => {
+    const tourType = await TourType.find({slug});
+    return {
+        data: tourType
+    }
+};
+
 const updateTourType = async (id: string, payload: ITourType) => {
     const existingTourType = await TourType.findById(id);
     if (!existingTourType) {
@@ -190,12 +205,16 @@ const deleteTourType = async (id: string) => {
 };
 
 export const TourService = {
+    // Tour
     createTour,
     getAllTours,
+    getSingleTour,
     updateTour,
     deleteTour,
+    // Tour Type
     createTourType,
     getAllTourTypes,
+    getSingleTourTypes,
     updateTourType,
     deleteTourType,
 }
