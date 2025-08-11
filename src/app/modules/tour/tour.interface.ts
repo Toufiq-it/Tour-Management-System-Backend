@@ -11,6 +11,8 @@ export interface ITour {
     images?: string[],
     location?: string,
     costFrom?: number,
+    departureLocation?: string;
+    arrivalLocation?: string;
     startDate?: Date,
     endDate?: Date,
     included?: string[],
@@ -21,5 +23,4 @@ export interface ITour {
     minAge?:number,
     division: Types.ObjectId,
     tourType : Types.ObjectId,
-
 };

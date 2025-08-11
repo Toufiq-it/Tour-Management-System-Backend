@@ -7,8 +7,6 @@ import { seedSuperAdmin } from "./app/ulits/seedSuperAdmin";
 
 let server: Server;
 
-
-
 const startServer = async () => {
     try {
         await mongoose.connect(envVars.DB_URL);

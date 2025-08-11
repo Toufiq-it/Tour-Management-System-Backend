@@ -12,6 +12,7 @@ const authProviderSchema = new Schema<IAuthProvider>({
 
 const userSchema = new Schema<IUser>({
     name: { type: String, required: true },
+    slug: { type: String, unique: true },
     email: { type: String, required: true, unique: true },
     password: { type: String },
     role: {
@@ -33,6 +34,40 @@ const userSchema = new Schema<IUser>({
 }, {
     timestamps: true,
     versionKey: false
+});
+
+// create slug
+userSchema.pre("save", async function (next) {
+    if (this.isModified("name")) {
+        const baseSlug = this.name.toLowerCase().split(" ").join("-");
+        let slug = `${baseSlug}`;
+
+        let counter = 0;
+        while (await User.exists({ slug })) {
+            slug = `${slug}-${counter++}`;
+        }
+        this.slug = slug;
+    }
+    next();
+});
+
+// update slug
+userSchema.pre("findOneAndUpdate", async function (next) {
+    const user = this.getUpdate() as Partial<IUser>
+
+    if (user.name) {
+        const baseSlug = user.name.toLowerCase().split(" ").join("-")
+        let slug = `${baseSlug}`
+
+        let counter = 0;
+        while (await User.exists({ slug })) {
+            slug = `${slug}-${counter++}`
+        }
+        user.slug = slug
+    }
+
+    this.setUpdate(user);
+    next();
 });
 
 export const User = model<IUser>("User", userSchema);

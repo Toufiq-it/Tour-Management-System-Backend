@@ -3,7 +3,7 @@ export interface IDivision {
     slug: string;
     thumbnail?: string,
     description?: string,
-}
+};
 
 
 /**
